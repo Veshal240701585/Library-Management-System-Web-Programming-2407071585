@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Library Management System - A simple web application to manage books, issue and return them." />
+  <title>Library Management System</title>
+  
+  <!-- React & Babel for zero-install instant browser preview -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* ===== Global Reset & Base Styles ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ffffff;
+      color: #333333;
+      line-height: 1.6;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    input, select {
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    /* ===== Layout ===== */
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main-content {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* ===== Header ===== */
+    .header {
+      background-color: #1a3557;
+      color: #ffffff;
+      padding: 15px 20px;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .header h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links button {
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    .nav-links button:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .nav-links button.active {
+      background-color: rgba(255, 255, 255, 0.25);
+      border-color: #ffffff;
+    }
+
+    /* ===== Dashboard ===== */
+    .dashboard {
+      margin-bottom: 30px;
+    }
+
+    .welcome-message {
+      margin-bottom: 20px;
+    }
+
+    .welcome-message h2 {
+      color: #1a3557;
+      font-size: 1.3rem;
+      margin-bottom: 5px;
+    }
+
+    .welcome-message p {
+      color: #666666;
+      font-size: 0.95rem;
+    }
+
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .summary-card {
+      background-color: #f5f7fa;
+      border: 1px solid #e0e4e8;
+      border-radius: 6px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .summary-card h3 {
+      font-size: 0.9rem;
+      color: #666666;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .summary-card .count {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a3557;
+    }
+
+    .summary-card.available .count {
+      color: #2e7d32;
+    }
+
+    .summary-card.issued .count {
+      color: #c62828;
+    }
+
+    /* ===== Book Form ===== */
+    .book-form {
+      background-color: #f5f7fa;
+      border: 1px solid #e0e4e8;
+      border-radius: 6px;
+      padding: 25px;
+      margin-bottom: 30px;
+    }
+
+    .book-form h2 {
+      color: #1a3557;
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      color: #555555;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 8px 10px;
+      border: 1px solid #ccd0d5;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #1a3557;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-add {
+      background-color: #1a3557;
+      color: #ffffff;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      transition: background-color 0.2s;
+    }
+
+    .btn-add:hover {
+      background-color: #244a75;
+    }
+
+    .form-message {
+      font-size: 0.85rem;
+      padding: 6px 10px;
+      border-radius: 4px;
+    }
+
+    .form-message.error {
+      color: #c62828;
+      background-color: #ffebee;
+    }
+
+    .form-message.success {
+      color: #2e7d32;
+      background-color: #e8f5e9;
+    }
+
+    /* ===== Search Bar ===== */
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .search-bar input {
+      flex: 1;
+      min-width: 200px;
+      padding: 8px 12px;
+      border: 1px solid #ccd0d5;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-bar input:focus {
+      border-color: #1a3557;
+    }
+
+    .search-bar select {
+      padding: 8px 12px;
+      border: 1px solid #ccd0d5;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      outline: none;
+      background-color: #ffffff;
+    }
+
+    /* ===== Book List / Table ===== */
+    .book-list {
+      margin-bottom: 30px;
+    }
+
+    .book-list h2 {
+      color: #1a3557;
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    .book-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .book-table thead {
+      background-color: #1a3557;
+      color: #ffffff;
+    }
+
+    .book-table th,
+    .book-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #e0e4e8;
+    }
+
+    .book-table tbody tr:hover {
+      background-color: #f5f7fa;
+    }
+
+    .book-table tbody tr:nth-child(even) {
+      background-color: #fafbfc;
+    }
+
+    .status-available {
+      color: #2e7d32;
+      font-weight: 600;
+    }
+
+    .status-issued {
+      color: #c62828;
+      font-weight: 600;
+    }
+
+    .btn-issue {
+      background-color: #1565c0;
+      color: #ffffff;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 3px;
+      font-size: 0.8rem;
+      margin-right: 5px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-issue:hover {
+      background-color: #1976d2;
+    }
+
+    .btn-return {
+      background-color: #2e7d32;
+      color: #ffffff;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 3px;
+      font-size: 0.8rem;
+      margin-right: 5px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-return:hover {
+      background-color: #388e3c;
+    }
+
+    .btn-delete {
+      background-color: #c62828;
+      color: #ffffff;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 3px;
+      font-size: 0.8rem;
+      transition: background-color 0.2s;
+    }
+
+    .btn-delete:hover {
+      background-color: #d32f2f;
+    }
+
+    .empty-message {
+      text-align: center;
+      padding: 30px;
+      color: #999999;
+      font-size: 0.95rem;
+    }
+
+    /* ===== Footer ===== */
+    .footer {
+      background-color: #1a3557;
+      color: #cccccc;
+      text-align: center;
+      padding: 15px 20px;
+      font-size: 0.85rem;
+      margin-top: auto;
+    }
+
+    .footer p {
+      margin-bottom: 2px;
+    }
+
+    @media (max-width: 600px) {
+      .header-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+      .nav-links {
+        justify-content: center;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .summary-cards {
+        grid-template-columns: 1fr;
+      }
+      .book-table th,
+      .book-table td {
+        padding: 8px 6px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const INITIAL_BOOKS = [
+      { id: 'B101', title: 'Clean Code', author: 'Robert C. Martin', category: 'Programming', status: 'Available' },
+      { id: 'B102', title: 'The Pragmatic Programmer', author: 'Andrew Hunt & David Thomas', category: 'Programming', status: 'Issued' },
+      { id: 'B103', title: 'To Kill a Mockingbird', author: 'Harper Lee', category: 'Fiction', status: 'Available' },
+      { id: 'B104', title: '1984', author: 'George Orwell', category: 'Fiction', status: 'Issued' },
+      { id: 'B105', title: 'A Brief History of Time', author: 'Stephen Hawking', category: 'Science', status: 'Available' },
+      { id: 'B106', title: 'Cosmos', author: 'Carl Sagan', category: 'Science', status: 'Available' },
+      { id: 'B107', title: 'Sapiens: A Brief History of Humankind', author: 'Yuval Noah Harari', category: 'History', status: 'Available' },
+      { id: 'B108', title: 'Guns, Germs, and Steel', author: 'Jared Diamond', category: 'History', status: 'Available' },
+    ];
+
+    const STORAGE_KEY = 'lms_books_data';
+
+    function Header({ activeNav, setActiveNav }) {
+      const handleNavClick = (navId) => {
+        setActiveNav(navId);
+        const element = document.getElementById(navId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      };
+
+      return (
+        <header className="header">
+          <div className="header-inner">
+            <h1>Library Management System</h1>
+            <nav className="nav-links">
+              <button
+                type="button"
+                className={activeNav === 'home' ? 'active' : ''}
+                onClick={() => handleNavClick('home')}
+              >
+                Home
+              </button>
+              <button
+                type="button"
+                className={activeNav === 'books' ? 'active' : ''}
+                onClick={() => handleNavClick('books')}
+              >
+                Books
+              </button>
+              <button
+                type="button"
+                className={activeNav === 'add-book' ? 'active' : ''}
+                onClick={() => handleNavClick('add-book')}
+              >
+                Add Book
+              </button>
+              <button
+                type="button"
+                className={activeNav === 'issue-return' ? 'active' : ''}
+                onClick={() => handleNavClick('issue-return')}
+              >
+                Issue / Return
+              </button>
+            </nav>
+          </div>
+        </header>
+      );
+    }
+
+    function Dashboard({ totalBooks, availableBooks, issuedBooks }) {
+      return (
+        <section id="home" className="dashboard">
+          <div className="welcome-message">
+            <h2>Welcome to the Library Management System</h2>
+            <p>Manage books, keep track of library records, and handle book issues and returns with ease.</p>
+          </div>
+
+          <div className="summary-cards">
+            <div className="summary-card total">
+              <h3>Total Books</h3>
+              <p className="count">{totalBooks}</p>
+            </div>
+            <div className="summary-card available">
+              <h3>Available Books</h3>
+              <p className="count">{availableBooks}</p>
+            </div>
+            <div className="summary-card issued">
+              <h3>Issued Books</h3>
+              <p className="count">{issuedBooks}</p>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function BookForm({ onAddBook }) {
+      const [title, setTitle] = useState('');
+      const [author, setAuthor] = useState('');
+      const [category, setCategory] = useState('Programming');
+      const [errorMessage, setErrorMessage] = useState('');
+      const [successMessage, setSuccessMessage] = useState('');
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!title.trim() || !author.trim() || !category.trim()) {
+          setErrorMessage('Please fill in all required fields.');
+          setSuccessMessage('');
+          return;
+        }
+
+        onAddBook({
+          title: title.trim(),
+          author: author.trim(),
+          category: category.trim(),
+          status: 'Available',
+        });
+
+        setTitle('');
+        setAuthor('');
+        setCategory('Programming');
+        setErrorMessage('');
+        setSuccessMessage('Book added successfully!');
+        setTimeout(() => setSuccessMessage(''), 3000);
+      };
+
+      return (
+        <section id="add-book" className="book-form">
+          <h2>Add New Book</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="form-grid">
+              <div className="form-group">
+                <label htmlFor="book-title">Book Title *</label>
+                <input
+                  id="book-title"
+                  type="text"
+                  placeholder="e.g. Introduction to Algorithms"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="book-author">Author *</label>
+                <input
+                  id="book-author"
+                  type="text"
+                  placeholder="e.g. Thomas H. Cormen"
+                  value={author}
+                  onChange={(e) => setAuthor(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="book-category">Category *</label>
+                <select
+                  id="book-category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                >
+                  <option value="Programming">Programming</option>
+                  <option value="Fiction">Fiction</option>
+                  <option value="Science">Science</option>
+                  <option value="History">History</option>
+                  <option value="General">General</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="form-actions">
+              <button type="submit" className="btn-add">Add Book</button>
+              {errorMessage && <span className="form-message error">{errorMessage}</span>}
+              {successMessage && <span className="form-message success">{successMessage}</span>}
+            </div>
+          </form>
+        </section>
+      );
+    }
+
+    function IssueReturn({ books, onIssueBook, onReturnBook }) {
+      const issuedBooks = books.filter((b) => b.status === 'Issued');
+      const availableBooks = books.filter((b) => b.status === 'Available');
+
+      return (
+        <section id="issue-return" className="book-form">
+          <h2>Issue / Return Quick Desk</h2>
+          <p style={{ color: '#555555', marginBottom: '15px', fontSize: '0.9rem' }}>
+            Quickly review currently borrowed books or issue available copies.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+            <div style={{ background: '#ffffff', padding: '15px', borderRadius: '4px', border: '1px solid #e0e4e8' }}>
+              <h3 style={{ color: '#c62828', fontSize: '1rem', marginBottom: '10px' }}>
+                Currently Issued Books ({issuedBooks.length})
+              </h3>
+              {issuedBooks.length === 0 ? (
+                <p style={{ fontSize: '0.85rem', color: '#888888' }}>No books currently issued.</p>
+              ) : (
+                <ul style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                  {issuedBooks.map((book) => (
+                    <li
+                      key={book.id}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '8px 0',
+                        borderBottom: '1px solid #f0f0f0',
+                        fontSize: '0.85rem',
+                      }}
+                    >
+                      <div>
+                        <strong>[{book.id}]</strong> {book.title}
+                      </div>
+                      <button
+                        type="button"
+                        className="btn-return"
+                        onClick={() => onReturnBook(book.id)}
+                      >
+                        Return
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div style={{ background: '#ffffff', padding: '15px', borderRadius: '4px', border: '1px solid #e0e4e8' }}>
+              <h3 style={{ color: '#2e7d32', fontSize: '1rem', marginBottom: '10px' }}>
+                Available for Issue ({availableBooks.length})
+              </h3>
+              {availableBooks.length === 0 ? (
+                <p style={{ fontSize: '0.85rem', color: '#888888' }}>All books are currently issued.</p>
+              ) : (
+                <ul style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                  {availableBooks.slice(0, 5).map((book) => (
+                    <li
+                      key={book.id}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '8px 0',
+                        borderBottom: '1px solid #f0f0f0',
+                        fontSize: '0.85rem',
+                      }}
+                    >
+                      <div>
+                        <strong>[{book.id}]</strong> {book.title}
+                      </div>
+                      <button
+                        type="button"
+                        className="btn-issue"
+                        onClick={() => onIssueBook(book.id)}
+                      >
+                        Issue
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function SearchBar({ searchQuery, setSearchQuery, selectedCategory, setSelectedCategory }) {
+      return (
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search books by title, author, or ID..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="All">All Categories</option>
+            <option value="Programming">Programming</option>
+            <option value="Fiction">Fiction</option>
+            <option value="Science">Science</option>
+            <option value="History">History</option>
+            <option value="General">General</option>
+          </select>
+        </div>
+      );
+    }
+
+    function BookList({ books, selectedBookId, setSelectedBookId, onIssueBook, onReturnBook, onDeleteBook }) {
+      return (
+        <section id="books" className="book-list">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
+            <h2>Books in Library</h2>
+            <span style={{ fontSize: '0.85rem', color: '#666666' }}>
+              Tip: Click row to select; press the Delete button or keyboard Delete key.
+            </span>
+          </div>
+
+          <div className="table-wrapper">
+            <table className="book-table">
+              <thead>
+                <tr>
+                  <th>Book ID</th>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {books.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="empty-message">No books found in the library.</td>
+                  </tr>
+                ) : (
+                  books.map((book) => {
+                    const isAvailable = book.status === 'Available';
+                    const isSelected = selectedBookId === book.id;
+                    return (
+                      <tr
+                        key={book.id}
+                        onClick={() => setSelectedBookId && setSelectedBookId(book.id)}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: isSelected ? '#e3f2fd' : undefined,
+                        }}
+                        title="Click row to select"
+                      >
+                        <td><strong>{book.id}</strong></td>
+                        <td>{book.title}</td>
+                        <td>{book.author}</td>
+                        <td>{book.category}</td>
+                        <td>
+                          <span className={isAvailable ? 'status-available' : 'status-issued'}>
+                            {book.status}
+                          </span>
+                        </td>
+                        <td onClick={(e) => e.stopPropagation()}>
+                          {isAvailable ? (
+                            <button
+                              type="button"
+                              className="btn-issue"
+                              onClick={() => onIssueBook(book.id)}
+                              title="Issue this book"
+                            >
+                              Issue
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              className="btn-return"
+                              onClick={() => onReturnBook(book.id)}
+                              title="Return this book"
+                            >
+                              Return
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            className="btn-delete"
+                            onClick={() => onDeleteBook(book.id)}
+                            style={{
+                              opacity: isAvailable ? 1 : 0.65,
+                              cursor: 'pointer',
+                            }}
+                            title={
+                              isAvailable
+                                ? 'Delete this book'
+                                : 'Click to see why this book cannot be deleted'
+                            }
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      );
+    }
+
+    function Footer() {
+      const currentYear = new Date().getFullYear();
+      return (
+        <footer className="footer">
+          <p>Library Management System &copy; {currentYear}</p>
+          <p>College Web Programming Project</p>
+        </footer>
+      );
+    }
+
+    function App() {
+      const [books, setBooks] = useState(() => {
+        try {
+          const savedBooks = localStorage.getItem(STORAGE_KEY);
+          if (savedBooks !== null) {
+            return JSON.parse(savedBooks);
+          }
+        } catch (e) {
+          console.error('Error loading localStorage:', e);
+        }
+        return INITIAL_BOOKS;
+      });
+
+      const [searchQuery, setSearchQuery] = useState('');
+      const [selectedCategory, setSelectedCategory] = useState('All');
+      const [selectedBookId, setSelectedBookId] = useState(null);
+      const [activeNav, setActiveNav] = useState('home');
+
+      useEffect(() => {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+        } catch (e) {
+          console.error('Error saving to localStorage:', e);
+        }
+      }, [books]);
+
+      const totalBooks = books.length;
+      const availableBooks = books.filter((b) => b.status === 'Available').length;
+      const issuedBooks = books.filter((b) => b.status === 'Issued').length;
+
+      const generateBookId = () => {
+        const existingNumbers = books.map((b) => {
+          const num = parseInt(b.id.replace(/\D/g, ''), 10);
+          return isNaN(num) ? 0 : num;
+        });
+        const maxNum = existingNumbers.length > 0 ? Math.max(...existingNumbers, 100) : 100;
+        return `B${maxNum + 1}`;
+      };
+
+      const handleAddBook = (bookData) => {
+        const newBook = { ...bookData, id: generateBookId() };
+        setBooks((prev) => [newBook, ...prev]);
+        setSelectedBookId(newBook.id);
+      };
+
+      const handleIssueBook = (bookId) => {
+        setBooks((prev) =>
+          prev.map((book) => {
+            if (book.id === bookId) {
+              if (book.status === 'Issued') return book;
+              return { ...book, status: 'Issued' };
+            }
+            return book;
+          })
+        );
+      };
+
+      const handleReturnBook = (bookId) => {
+        setBooks((prev) =>
+          prev.map((book) => {
+            if (book.id === bookId) {
+              if (book.status === 'Available') return book;
+              return { ...book, status: 'Available' };
+            }
+            return book;
+          })
+        );
+      };
+
+      const handleDeleteBook = (bookId) => {
+        const bookToDelete = books.find((b) => b.id === bookId);
+        if (!bookToDelete) return;
+
+        // Requirement: Do not allow deletion of a currently issued book
+        if (bookToDelete.status === 'Issued') {
+          alert(`Cannot delete "${bookToDelete.title}" (${bookToDelete.id}) because it is currently issued. Please return it before deleting.`);
+          return;
+        }
+
+        // Delete the available book directly
+        setBooks((prev) => prev.filter((b) => b.id !== bookId));
+        if (selectedBookId === bookId) {
+          setSelectedBookId(null);
+        }
+      };
+
+      // Keyboard Delete key handler
+      useEffect(() => {
+        const handleKeyDown = (e) => {
+          if (
+            document.activeElement &&
+            (document.activeElement.tagName === 'INPUT' ||
+              document.activeElement.tagName === 'SELECT' ||
+              document.activeElement.tagName === 'TEXTAREA')
+          ) {
+            return;
+          }
+
+          if (e.key === 'Delete' && selectedBookId) {
+            handleDeleteBook(selectedBookId);
+          }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+      }, [selectedBookId, books]);
+
+      const filteredBooks = books.filter((book) => {
+        const query = searchQuery.toLowerCase().trim();
+        const matchesSearch =
+          book.title.toLowerCase().includes(query) ||
+          book.author.toLowerCase().includes(query) ||
+          book.id.toLowerCase().includes(query);
+        const matchesCategory =
+          selectedCategory === 'All' || book.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+      });
+
+      return (
+        <div className="app">
+          <Header activeNav={activeNav} setActiveNav={setActiveNav} />
+          <main className="main-content">
+            <Dashboard
+              totalBooks={totalBooks}
+              availableBooks={availableBooks}
+              issuedBooks={issuedBooks}
+            />
+            <BookForm onAddBook={handleAddBook} />
+            <IssueReturn
+              books={books}
+              onIssueBook={handleIssueBook}
+              onReturnBook={handleReturnBook}
+            />
+            <SearchBar
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+            />
+            <BookList
+              books={filteredBooks}
+              selectedBookId={selectedBookId}
+              setSelectedBookId={setSelectedBookId}
+              onIssueBook={handleIssueBook}
+              onReturnBook={handleReturnBook}
+              onDeleteBook={handleDeleteBook}
+            />
+          </main>
+          <Footer />
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

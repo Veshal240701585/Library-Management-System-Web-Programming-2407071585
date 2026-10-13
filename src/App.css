@@ -1,0 +1,405 @@
+/* ===== Layout ===== */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ===== Header ===== */
+.header {
+  background-color: #1a3557;
+  color: #ffffff;
+  padding: 15px 20px;
+}
+
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.header h1 {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nav-links button {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.nav-links button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.nav-links button.active {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-color: #ffffff;
+}
+
+/* ===== Dashboard ===== */
+.dashboard {
+  margin-bottom: 30px;
+}
+
+.welcome-message {
+  margin-bottom: 20px;
+}
+
+.welcome-message h2 {
+  color: #1a3557;
+  font-size: 1.3rem;
+  margin-bottom: 5px;
+}
+
+.welcome-message p {
+  color: #666666;
+  font-size: 0.95rem;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  background-color: #f5f7fa;
+  border: 1px solid #e0e4e8;
+  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
+}
+
+.summary-card h3 {
+  font-size: 0.9rem;
+  color: #666666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.summary-card .count {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a3557;
+}
+
+.summary-card.total .count {
+  color: #1a3557;
+}
+
+.summary-card.available .count {
+  color: #2e7d32;
+}
+
+.summary-card.issued .count {
+  color: #c62828;
+}
+
+/* ===== Book Form ===== */
+.book-form {
+  background-color: #f5f7fa;
+  border: 1px solid #e0e4e8;
+  border-radius: 6px;
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+.book-form h2 {
+  color: #1a3557;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  color: #555555;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  padding: 8px 10px;
+  border: 1px solid #ccd0d5;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #1a3557;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-add {
+  background-color: #1a3557;
+  color: #ffffff;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  transition: background-color 0.2s;
+}
+
+.btn-add:hover {
+  background-color: #244a75;
+}
+
+.form-message {
+  font-size: 0.85rem;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+.form-message.error {
+  color: #c62828;
+  background-color: #ffebee;
+}
+
+.form-message.success {
+  color: #2e7d32;
+  background-color: #e8f5e9;
+}
+
+/* ===== Search Bar ===== */
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.search-bar input {
+  flex: 1;
+  min-width: 200px;
+  padding: 8px 12px;
+  border: 1px solid #ccd0d5;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-bar input:focus {
+  border-color: #1a3557;
+}
+
+.search-bar select {
+  padding: 8px 12px;
+  border: 1px solid #ccd0d5;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  outline: none;
+  background-color: #ffffff;
+}
+
+.search-bar select:focus {
+  border-color: #1a3557;
+}
+
+/* ===== Book List / Table ===== */
+.book-list {
+  margin-bottom: 30px;
+}
+
+.book-list h2 {
+  color: #1a3557;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.book-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.book-table thead {
+  background-color: #1a3557;
+  color: #ffffff;
+}
+
+.book-table th,
+.book-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e4e8;
+}
+
+.book-table tbody tr:hover {
+  background-color: #f5f7fa;
+}
+
+.book-table tbody tr:nth-child(even) {
+  background-color: #fafbfc;
+}
+
+.status-available {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.status-issued {
+  color: #c62828;
+  font-weight: 600;
+}
+
+.btn-issue {
+  background-color: #1565c0;
+  color: #ffffff;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  margin-right: 5px;
+  transition: background-color 0.2s;
+}
+
+.btn-issue:hover {
+  background-color: #1976d2;
+}
+
+.btn-return {
+  background-color: #2e7d32;
+  color: #ffffff;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  margin-right: 5px;
+  transition: background-color 0.2s;
+}
+
+.btn-return:hover {
+  background-color: #388e3c;
+}
+
+.btn-delete {
+  background-color: #c62828;
+  color: #ffffff;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  transition: background-color 0.2s;
+}
+
+.btn-delete:hover {
+  background-color: #d32f2f;
+}
+
+.btn-delete:disabled {
+  background-color: #999999;
+  cursor: not-allowed;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 30px;
+  color: #999999;
+  font-size: 0.95rem;
+}
+
+/* ===== Section Title ===== */
+.section-title {
+  color: #1a3557;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e0e4e8;
+}
+
+/* ===== Footer ===== */
+.footer {
+  background-color: #1a3557;
+  color: #cccccc;
+  text-align: center;
+  padding: 15px 20px;
+  font-size: 0.85rem;
+  margin-top: auto;
+}
+
+.footer p {
+  margin-bottom: 2px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .header-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .nav-links {
+    justify-content: center;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .book-table th,
+  .book-table td {
+    padding: 8px 6px;
+    font-size: 0.8rem;
+  }
+
+  .btn-issue,
+  .btn-return,
+  .btn-delete {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+}
